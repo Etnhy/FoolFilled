@@ -24,6 +24,7 @@
 		7A59C4DD2B7B8CAD0078F23D /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A59C4DC2B7B8CAD0078F23D /* BaseViewModel.swift */; };
 		7A59C4DF2B7B8DB20078F23D /* ImagesType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A59C4DE2B7B8DB20078F23D /* ImagesType.swift */; };
 		7A59C4E12B7BB2BD0078F23D /* ImagesErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A59C4E02B7BB2BD0078F23D /* ImagesErrors.swift */; };
+		7A59C4E52B7BB5320078F23D /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A59C4E42B7BB5320078F23D /* ErrorView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		7A59C4DC2B7B8CAD0078F23D /* BaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
 		7A59C4DE2B7B8DB20078F23D /* ImagesType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesType.swift; sourceTree = "<group>"; };
 		7A59C4E02B7BB2BD0078F23D /* ImagesErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesErrors.swift; sourceTree = "<group>"; };
+		7A59C4E42B7BB5320078F23D /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +87,7 @@
 				7A59C4CA2B7B6CF10078F23D /* Extensions */,
 				7A59C4B12B7B67690078F23D /* AppDelegate.swift */,
 				7A59C4B32B7B67690078F23D /* SceneDelegate.swift */,
-				7A59C4D52B7B8AE50078F23D /* Draw */,
+				7A59C4E22B7BB51D0078F23D /* Modules */,
 				7A59C4B72B7B67690078F23D /* Main.storyboard */,
 				7A59C4BA2B7B676A0078F23D /* Assets.xcassets */,
 				7A59C4BC2B7B676A0078F23D /* LaunchScreen.storyboard */,
@@ -145,6 +147,23 @@
 				7A59C4DC2B7B8CAD0078F23D /* BaseViewModel.swift */,
 			);
 			path = Core;
+			sourceTree = "<group>";
+		};
+		7A59C4E22B7BB51D0078F23D /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				7A59C4E32B7BB5250078F23D /* Completion */,
+				7A59C4D52B7B8AE50078F23D /* Draw */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
+		7A59C4E32B7BB5250078F23D /* Completion */ = {
+			isa = PBXGroup;
+			children = (
+				7A59C4E42B7BB5320078F23D /* ErrorView.swift */,
+			);
+			path = Completion;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -225,6 +244,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A59C4E52B7BB5320078F23D /* ErrorView.swift in Sources */,
 				7A59C4E12B7BB2BD0078F23D /* ImagesErrors.swift in Sources */,
 				7A59C4B62B7B67690078F23D /* ViewController.swift in Sources */,
 				7A59C4DD2B7B8CAD0078F23D /* BaseViewModel.swift in Sources */,
