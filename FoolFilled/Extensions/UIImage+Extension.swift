@@ -26,32 +26,48 @@ extension UIImage {
     private func floodFill(_ pixelData: inout [[(red: UInt8, green: UInt8, blue: UInt8, alpha: UInt8)]], x: Int, y: Int, startColor: (red: UInt8, green: UInt8, blue: UInt8, alpha: UInt8), fillColor: (red: UInt8, green: UInt8, blue: UInt8, alpha: UInt8)) {
         
         var queue = [(x: Int, y: Int)]()
-        queue.append((x, y))
-        
-        while !queue.isEmpty {
-            let point = queue.removeFirst()
-            let x = point.x
-            let y = point.y
-            
-            if x < 0 || y < 0 || x >= pixelData[0].count || y >= pixelData.count || pixelData[y][x] != startColor {
-                continue
-            }
-            
-            pixelData[y][x] = fillColor
-            
-            queue.append((x + 1, y))
-            queue.append((x - 1, y))
-            queue.append((x, y + 1))
-            queue.append((x, y - 1))
-        }
-//        guard x >= 0, y >= 0, x < pixelData[0].count, y < pixelData.count, pixelData[y][x] == startColor else { return }
+         queue.append((x, y))
+         
+         while !queue.isEmpty {
+             let point = queue.removeFirst()
+             let x = point.x
+             let y = point.y
+             
+             if x < 0 || y < 0 || x >= pixelData[0].count || y >= pixelData.count {
+                 continue
+             }
+
+             let currentColor = pixelData[y][x]
+             if !isColor(currentColor, similarTo: startColor, withTolerance: 100) {
+                 continue
+             }
+             
+             pixelData[y][x] = fillColor
+             
+             queue.append((x + 1, y))
+             queue.append((x - 1, y))
+             queue.append((x, y + 1))
+             queue.append((x, y - 1))
+         }
+//        var queue = [(x: Int, y: Int)]()
+//        queue.append((x, y))
 //        
-//        pixelData[y][x] = fillColor
-//        
-//        floodFill(&pixelData, x: x+1, y: y, startColor: startColor, fillColor: fillColor)
-//        floodFill(&pixelData, x: x-1, y: y, startColor: startColor, fillColor: fillColor)
-//        floodFill(&pixelData, x: x, y: y+1, startColor: startColor, fillColor: fillColor)
-//        floodFill(&pixelData, x: x, y: y-1, startColor: startColor, fillColor: fillColor)
+//        while !queue.isEmpty {
+//            let point = queue.removeFirst()
+//            let x = point.x
+//            let y = point.y
+//            
+//            if x < 0 || y < 0 || x >= pixelData[0].count || y >= pixelData.count || pixelData[y][x] != startColor {
+//                continue
+//            }
+//            
+//            pixelData[y][x] = fillColor
+//            
+//            queue.append((x + 1, y))
+//            queue.append((x - 1, y))
+//            queue.append((x, y + 1))
+//            queue.append((x, y - 1))
+//        }
     }
     
     private func createImage(fromPixelData pixelData: [[(red: UInt8, green: UInt8, blue: UInt8, alpha: UInt8)]], width: Int, height: Int) -> UIImage? {
@@ -83,7 +99,7 @@ extension UIImage {
         
         return UIImage(cgImage: cgim)
     }
-    func pixelData() -> [[(red: UInt8, green: UInt8, blue: UInt8, alpha: UInt8)]]? {
+   private func pixelData() -> [[(red: UInt8, green: UInt8, blue: UInt8, alpha: UInt8)]]? {
         let size = self.size
         let dataSize = size.width * size.height * 4
         var pixelData = [UInt8](repeating: 0, count: Int(dataSize))
@@ -110,4 +126,13 @@ extension UIImage {
         
         return pixels
     }
+    
+    private func isColor(_ color1: (red: UInt8, green: UInt8, blue: UInt8, alpha: UInt8), similarTo color2: (red: UInt8, green: UInt8, blue: UInt8, alpha: UInt8), withTolerance tolerance: UInt8) -> Bool {
+        let isRedSimilar = abs(Int(color1.red) - Int(color2.red)) <= Int(tolerance)
+        let isGreenSimilar = abs(Int(color1.green) - Int(color2.green)) <= Int(tolerance)
+        let isBlueSimilar = abs(Int(color1.blue) - Int(color2.blue)) <= Int(tolerance)
+        let isAlphaSimilar = abs(Int(color1.alpha) - Int(color2.alpha)) <= Int(tolerance)
+        return isRedSimilar && isGreenSimilar && isBlueSimilar && isAlphaSimilar
+    }
+
 }
