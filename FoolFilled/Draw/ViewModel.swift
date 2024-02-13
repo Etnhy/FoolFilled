@@ -18,6 +18,10 @@ final class DrawViewModel: BaseViewModel {
         return .first
     }
     
+    public func shareImage() {
+        guard let currentImage = currentImage else { return }
+        viewModelDelegate?.showActivity(url: currentImage)
+    }
     
     
     public func makeNewImage(point: CGPoint, imageView: UIImageView) async throws ->  UIImage? {
@@ -29,7 +33,7 @@ final class DrawViewModel: BaseViewModel {
 
         if let newImage = image.applyingFloodFill(from: pointInImageCoordinates, fillColor: selectedColor.buttonColor) {
             await viewModelDelegate?.loader(isStart: false)
-
+            currentImage = newImage
             return newImage
         }
         return nil

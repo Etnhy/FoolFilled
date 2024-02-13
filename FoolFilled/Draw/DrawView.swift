@@ -11,6 +11,7 @@ protocol DrawViewDelegate: AnyObject {
     func cleareImage()
     func filledImage(point: CGPoint, imageView: UIImageView) async
     func selectedColor(color: ColorsType)
+    func shareFilledImage()
 }
 
 class DrawView: UIView {
@@ -56,6 +57,17 @@ class DrawView: UIView {
         
     }()
     
+    private lazy var shareButton: UIButton = {
+        var button = UIButton(type: .system)
+        button.backgroundColor = .white
+
+        button.setAttributedTitle(NSAttributedString(string: "Share",attributes: [.foregroundColor: UIColor.black,
+                                                                        .font: UIFont.systemFont(ofSize: 18, weight: .bold)]), for: .normal)
+        button.addTarget(self, action: #selector(shareImage), for: .touchUpInside)
+
+        return button
+    }()
+    
     lazy var loader: UIActivityIndicatorView = {
         var loader = UIActivityIndicatorView(style: .large)
         loader.backgroundColor = .black.withAlphaComponent(0.3)
@@ -75,7 +87,7 @@ class DrawView: UIView {
     }
     
     private func setupView() {
-        [clearButton,imageView,buttonStackView,loader].forEach(addSubview(_:))
+        [imageView,buttonStackView,loader].forEach(addSubview(_:))//shareButton,clearButton,
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
         imageView.addGestureRecognizer(tapGesture)
 
@@ -96,12 +108,24 @@ class DrawView: UIView {
             make.height.equalTo(70)
             make.centerX.equalTo(imageView)
         }
-        clearButton.snp.remakeConstraints { make in
+        
+        let stacks = UIStackView()
+        stacks.axis = .horizontal
+        stacks.distribution = .fillEqually
+        stacks.addArrangedSubview(clearButton)
+        stacks.addArrangedSubview(shareButton)
+        stacks.spacing = 12
+        addSubview(stacks)
+        
+        
+        stacks.snp.remakeConstraints { make in
             make.bottom.equalTo(imageView.snp.top).offset(-12)
-            make.width.equalTo(120)
+            make.width.equalToSuperview().multipliedBy(0.9)
             make.centerX.equalToSuperview()
             make.height.equalTo(50)
         }
+        
+        
         loader.snp.remakeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -148,7 +172,9 @@ class DrawView: UIView {
         }
     }
     
-    
+    @objc private func shareImage() {
+        delegate?.shareFilledImage()
+    }
 
 
 }

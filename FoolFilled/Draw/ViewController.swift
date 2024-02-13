@@ -30,6 +30,10 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: DrawViewDelegate {
+    func shareFilledImage() {
+        viewModel.shareImage()
+    }
+    
     func filledImage(point: CGPoint, imageView: UIImageView) async {
         do {
             let image = try await viewModel.makeNewImage(point: point, imageView: imageView)
@@ -53,6 +57,22 @@ extension ViewController: DrawViewDelegate {
 }
 
 extension ViewController: BaseViewModelDelegate {
+    func showActivity(url: UIImage) {
+        let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        activityViewController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
+        
+        if let popoverPresentationController = activityViewController.popoverPresentationController {
+            popoverPresentationController.sourceView = self.view
+            popoverPresentationController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            popoverPresentationController.permittedArrowDirections = []
+        }
+
+        DispatchQueue.main.async {
+            self.present(activityViewController, animated: true, completion: nil)
+
+        }
+    }
+    
     func loader(isStart: Bool) {
         DispatchQueue.main.async { [weak self] in
             guard let strongSelf = self else { return }
