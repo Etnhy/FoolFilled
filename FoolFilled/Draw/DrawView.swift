@@ -9,7 +9,7 @@ import UIKit
 
 protocol DrawViewDelegate: AnyObject {
     func cleareImage()
-    func filledImage(point: CGPoint, imageView: UIImageView)
+    func filledImage(point: CGPoint, imageView: UIImageView) async
     func selectedColor(color: ColorsType)
 }
 
@@ -56,6 +56,12 @@ class DrawView: UIView {
         
     }()
     
+    lazy var loader: UIActivityIndicatorView = {
+        var loader = UIActivityIndicatorView(style: .large)
+        loader.backgroundColor = .black.withAlphaComponent(0.3)
+        return loader
+    }()
+    
     private(set) var selectedColor: UIColor = .blue
 
     override init(frame: CGRect) {
@@ -69,7 +75,7 @@ class DrawView: UIView {
     }
     
     private func setupView() {
-        [clearButton,imageView,buttonStackView].forEach(addSubview(_:))
+        [clearButton,imageView,buttonStackView,loader].forEach(addSubview(_:))
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
         imageView.addGestureRecognizer(tapGesture)
 
@@ -96,6 +102,9 @@ class DrawView: UIView {
             make.centerX.equalToSuperview()
             make.height.equalTo(50)
         }
+        loader.snp.remakeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
     
     
@@ -118,7 +127,6 @@ class DrawView: UIView {
     }
     
      //MARK: -  ACtions
-    
     @objc private func clearImageView() {
         delegate?.cleareImage()
     }
@@ -133,8 +141,10 @@ class DrawView: UIView {
 
     @objc func imageTapped(_ gesture: UITapGestureRecognizer) {
         if gesture.state == .ended {
-            let location = gesture.location(in: imageView) 
-            delegate?.filledImage(point: location, imageView: imageView)
+            let location = gesture.location(in: imageView)
+            Task {
+                await delegate?.filledImage(point: location, imageView: imageView)
+            }
         }
     }
     

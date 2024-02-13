@@ -7,7 +7,14 @@
 
 import Foundation
 
-
+protocol BaseViewModelDelegate: AnyObject {
+    func loader(isStart: Bool) async
+}
 class BaseViewModel {
+    weak var viewModelDelegate: BaseViewModelDelegate?
     
+
+    init(viewModelDelegate: BaseViewModelDelegate? = nil) {
+        self.viewModelDelegate = viewModelDelegate
+    }
 }

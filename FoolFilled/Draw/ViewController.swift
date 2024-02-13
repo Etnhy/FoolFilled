@@ -18,6 +18,7 @@ class ViewController: UIViewController {
 
     private lazy var viewModel: DrawViewModel = {
         var model = DrawViewModel()
+        model.viewModelDelegate = self
         return model
     }()
     
@@ -29,9 +30,15 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: DrawViewDelegate {
-    func filledImage(point: CGPoint, imageView: UIImageView) {
-        let image = viewModel.makeNewImage(point: point, imageView: imageView)
-        mainView.remakeImage(image: image)
+    func filledImage(point: CGPoint, imageView: UIImageView) async {
+        do {
+            let image = try await viewModel.makeNewImage(point: point, imageView: imageView)
+            mainView.remakeImage(image: image)
+
+        } catch {
+            print(error)
+        }
+        
     }
     
     func cleareImage() {
@@ -45,3 +52,16 @@ extension ViewController: DrawViewDelegate {
     
 }
 
+extension ViewController: BaseViewModelDelegate {
+    func loader(isStart: Bool) {
+        DispatchQueue.main.async { [weak self] in
+            guard let strongSelf = self else { return }
+            switch isStart {
+            case true: strongSelf.mainView.loader.startAnimating()
+            case false: strongSelf.mainView.loader.stopAnimating()
+            }
+        }
+    }
+    
+    
+}
