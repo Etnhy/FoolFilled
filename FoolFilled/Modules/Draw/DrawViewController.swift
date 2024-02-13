@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ViewController: UIViewController {
+class DrawViewController: UIViewController {
     
     private lazy var mainView: DrawView = {
         var view = DrawView()
@@ -29,7 +29,7 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController: DrawViewDelegate {
+extension DrawViewController: DrawViewDelegate {
     func shareFilledImage() {
         viewModel.shareImage()
     }
@@ -56,7 +56,7 @@ extension ViewController: DrawViewDelegate {
     
 }
 
-extension ViewController: BaseViewModelDelegate {
+extension DrawViewController: BaseViewModelDelegate {
     func showActivity(url: UIImage) {
         let activityViewController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         activityViewController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
