@@ -40,7 +40,7 @@ extension ViewController: DrawViewDelegate {
             mainView.remakeImage(image: image)
 
         } catch {
-            print(error)
+            ErrorView.shared.showWithBlurEffect(completeStyle: error.localizedDescription)
         }
         
     }
