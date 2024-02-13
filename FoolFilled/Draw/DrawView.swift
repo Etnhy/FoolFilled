@@ -7,33 +7,16 @@
 
 import UIKit
 
-
-
-
-enum ColorsType: Int, CaseIterable {
-    case red,yellow,blue,brown
-    
-    
-    var buttonColor: UIColor {
-        switch self {
-        case .red: return UIColor.red
-        case .yellow: return UIColor.yellow
-        case .blue: return UIColor.blue
-        case .brown: return UIColor.brown
-        }
-    }
-    var title: String {
-        switch self {
-        case .red: return "red"
-        case .yellow: return "yellow"
-        case .blue: return "blue"
-        case .brown: return "brown"
-        }
-    }
+protocol DrawViewDelegate: AnyObject {
+    func cleareImage()
+    func filledImage(point: CGPoint, imageView: UIImageView)
+    func selectedColor(color: ColorsType)
 }
 
 class DrawView: UIView {
-
+    
+    weak var delegate: DrawViewDelegate?
+    
     private lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.isUserInteractionEnabled = true
@@ -77,7 +60,7 @@ class DrawView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupImage()
+        setupImage(imageName: "pic2")
         setupView()
     }
     
@@ -116,8 +99,16 @@ class DrawView: UIView {
     }
     
     
-    private func setupImage() {
-        let image = UIImage(named: "pic2")
+
+    
+     //MARK: -  public
+    public func remakeImage(image: UIImage?) {
+        guard let image = image else { return}
+        self.imageView.image = image
+    }
+    
+    public func setupImage(imageName: String) {
+        let image = UIImage(named: imageName)
         
         image?.prepareForDisplay { [weak self] preparedImage in
             DispatchQueue.main.async {
@@ -126,58 +117,28 @@ class DrawView: UIView {
         }
     }
     
+     //MARK: -  ACtions
+    
     @objc private func clearImageView() {
-        setupImage()
+        delegate?.cleareImage()
     }
     
+    
     @objc private func colorButtonTapped(_ sender: UIButton) {
-        guard let color = ColorsType(rawValue: sender.tag)?.buttonColor else { return }
-        selectedColor = color
+        guard let color = ColorsType(rawValue: sender.tag) else { return }
+        selectedColor = color.buttonColor
+        delegate?.selectedColor(color: color)
+
     }
 
     @objc func imageTapped(_ gesture: UITapGestureRecognizer) {
         if gesture.state == .ended {
-            let location = gesture.location(in: imageView) // Точка касания в координатах imageView
-            guard let image = imageView.image else { return }
-
-            let pointInImageCoordinates = convertPointToImageCoordinates(point: location, imageSize: image.size, imageViewSize: imageView.bounds.size)
-
-            if let newImage = image.applyingFloodFill(from: pointInImageCoordinates, fillColor: selectedColor) {
-                imageView.image = newImage
-            }
+            let location = gesture.location(in: imageView) 
+            delegate?.filledImage(point: location, imageView: imageView)
         }
     }
-    func convertPointToImageCoordinates(point: CGPoint, imageSize: CGSize, imageViewSize: CGSize) -> CGPoint {
-        let scaleFactorX = imageSize.width / imageViewSize.width
-        let scaleFactorY = imageSize.height / imageViewSize.height
-        let imagePoint = CGPoint(x: point.x * scaleFactorX, y: point.y * scaleFactorY)
-        return imagePoint
-    }
+    
     
 
-    
-    func floodFillImage(_ originalImage: UIImage, fromPoint startPoint: CGPoint, fillColor: UIColor) -> UIImage? {
-        guard let inputCGImage = originalImage.cgImage else { return nil }
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let width = inputCGImage.width
-        let height = inputCGImage.height
-        let bytesPerPixel = 4
-        let bitsPerComponent = 8
-        let bytesPerRow = bytesPerPixel * width
-        var pixelData = [UInt8](repeating: 0, count: width * height * bytesPerPixel)
-
-        let context = CGContext(data: &pixelData,
-                                width: width,
-                                height: height,
-                                bitsPerComponent: bitsPerComponent,
-                                bytesPerRow: bytesPerRow,
-                                space: colorSpace,
-                                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
-
-        context?.draw(inputCGImage, in: CGRect(x: 0, y: 0, width: width, height: height))
-
-        guard let outputCGImage = context?.makeImage() else { return nil }
-        return UIImage(cgImage: outputCGImage)
-    }
 
 }
