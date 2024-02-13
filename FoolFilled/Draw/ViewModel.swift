@@ -29,6 +29,7 @@ final class DrawViewModel: BaseViewModel {
         guard let image = await imageView.image else { 
             throw ImagesError.imageNotFound
         }
+        
         let pointInImageCoordinates = await convertPointToImageCoordinates(point: point, imageSize: image.size, imageViewSize: imageView.bounds.size)
 
         if let newImage = image.applyingFloodFill(from: pointInImageCoordinates, fillColor: selectedColor.buttonColor) {
@@ -36,7 +37,8 @@ final class DrawViewModel: BaseViewModel {
             currentImage = newImage
             return newImage
         }
-        return nil
+        
+        throw ImagesError.incorrectImage
     }
     
     private func convertPointToImageCoordinates(point: CGPoint, imageSize: CGSize, imageViewSize: CGSize) async -> CGPoint {
@@ -49,6 +51,3 @@ final class DrawViewModel: BaseViewModel {
 }
 
 
-enum ImagesError: Error {
-    case imageNotFound
-}

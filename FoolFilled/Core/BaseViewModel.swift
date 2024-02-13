@@ -11,6 +11,7 @@ protocol BaseViewModelDelegate: AnyObject {
     func loader(isStart: Bool) async
     func showActivity(url: UIImage)
 }
+
 class BaseViewModel {
     weak var viewModelDelegate: BaseViewModelDelegate?
     

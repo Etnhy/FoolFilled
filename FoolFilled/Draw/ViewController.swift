@@ -10,7 +10,7 @@ import SnapKit
 
 class ViewController: UIViewController {
     
-    private lazy var mainView:DrawView = {
+    private lazy var mainView: DrawView = {
         var view = DrawView()
         view.delegate = self
         return view
